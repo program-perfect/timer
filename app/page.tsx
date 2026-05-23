@@ -4,19 +4,23 @@ import { MovableContainer } from "@/components/MovableContainer"
 import { RelayTextureOverlay } from "@/components/RelayTextureOverlay"
 import { TimerDisplay } from "@/components/TimerDisplay"
 import { formatTimer } from "@/lib/time"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 const START_SECONDS = 30;
 const PRESET_SECONDS = [30, 60, 3 * 60, 5 * 60, 10 * 60, 15 * 60, 30 * 60];
 
 const STORAGE_KEY = "screen-prop-timer-started-at";
 const STORAGE_DURATION_KEY = "screen-prop-timer-duration";
+const TIME_BUTTON_DELAY_MS = 3000;
 
 export default function Page() {
   const [durationSeconds, setDurationSeconds] = useState(START_SECONDS);
   const [isTimePanelOpen, setIsTimePanelOpen] = useState(false);
   const [remaining, setRemaining] = useState(START_SECONDS);
   const [isRunning, setIsRunning] = useState(false);
+  const [isTimeButtonVisible, setIsTimeButtonVisible] = useState(true);
+
+  const showButtonTimeoutRef = useRef<number | null>(null);
 
   const digits = useMemo(() => formatTimer(remaining).split(""), [remaining]);
 
@@ -29,6 +33,7 @@ export default function Page() {
     if (!savedStart) {
       setDurationSeconds(savedDuration);
       setRemaining(savedDuration);
+      setIsTimeButtonVisible(true);
       return;
     }
 
@@ -38,11 +43,20 @@ export default function Page() {
     setDurationSeconds(savedDuration);
     setRemaining(nextRemaining);
     setIsRunning(nextRemaining > 0);
+    setIsTimeButtonVisible(nextRemaining <= 0);
 
     if (nextRemaining <= 0) {
       window.localStorage.removeItem(STORAGE_KEY);
       window.localStorage.removeItem(STORAGE_DURATION_KEY);
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (showButtonTimeoutRef.current !== null) {
+        window.clearTimeout(showButtonTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -67,8 +81,20 @@ export default function Page() {
 
       if (nextRemaining <= 0) {
         setIsRunning(false);
+        setIsTimePanelOpen(false);
+        setIsTimeButtonVisible(false);
+
         window.localStorage.removeItem(STORAGE_KEY);
         window.localStorage.removeItem(STORAGE_DURATION_KEY);
+
+        if (showButtonTimeoutRef.current !== null) {
+          window.clearTimeout(showButtonTimeoutRef.current);
+        }
+
+        showButtonTimeoutRef.current = window.setTimeout(() => {
+          setIsTimeButtonVisible(true);
+          showButtonTimeoutRef.current = null;
+        }, TIME_BUTTON_DELAY_MS);
       }
     }, 250);
 
@@ -79,6 +105,7 @@ export default function Page() {
     setDurationSeconds(seconds);
     setRemaining(seconds);
     setIsTimePanelOpen(false);
+    setIsTimeButtonVisible(true);
 
     window.localStorage.removeItem(STORAGE_KEY);
     window.localStorage.setItem(STORAGE_DURATION_KEY, String(seconds));
@@ -95,7 +122,13 @@ export default function Page() {
   }
 
   function startTimer() {
+    if (showButtonTimeoutRef.current !== null) {
+      window.clearTimeout(showButtonTimeoutRef.current);
+      showButtonTimeoutRef.current = null;
+    }
+
     setIsTimePanelOpen(false);
+    setIsTimeButtonVisible(false);
 
     window.localStorage.setItem(STORAGE_KEY, String(Date.now()));
     window.localStorage.setItem(STORAGE_DURATION_KEY, String(durationSeconds));
@@ -105,19 +138,32 @@ export default function Page() {
   }
 
   function stopTimer() {
+    if (showButtonTimeoutRef.current !== null) {
+      window.clearTimeout(showButtonTimeoutRef.current);
+      showButtonTimeoutRef.current = null;
+    }
+
     window.localStorage.removeItem(STORAGE_KEY);
     setIsRunning(false);
+    setIsTimeButtonVisible(true);
   }
 
   function resetTimer() {
+    if (showButtonTimeoutRef.current !== null) {
+      window.clearTimeout(showButtonTimeoutRef.current);
+      showButtonTimeoutRef.current = null;
+    }
+
     window.localStorage.removeItem(STORAGE_KEY);
     setRemaining(durationSeconds);
     setIsRunning(false);
+    setIsTimePanelOpen(false);
+    setIsTimeButtonVisible(true);
   }
 
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.24),transparent_48%),linear-gradient(145deg,#111,#030303_72%)] text-zinc-200">
-      {!isRunning && (
+      {!isRunning && isTimeButtonVisible && (
         <div className="absolute right-4 top-4 z-50 flex flex-col items-end gap-2">
           <button
             type="button"
