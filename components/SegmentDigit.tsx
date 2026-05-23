@@ -12,13 +12,13 @@ const SEGMENTS_BY_DIGIT: Record<string, string[]> = {
 };
 
 const SEGMENT_POSITION: Record<string, string> = {
-  a: "left-[16%] top-0 h-[10%] w-[68%]",
-  g: "left-[16%] top-[45%] h-[10%] w-[68%]",
-  d: "left-[16%] bottom-0 h-[10%] w-[68%]",
-  b: "right-[4%] top-[5%] h-[43%] w-[11%]",
-  c: "right-[4%] bottom-[5%] h-[43%] w-[11%]",
-  e: "left-[4%] bottom-[5%] h-[43%] w-[11%]",
-  f: "left-[4%] top-[5%] h-[43%] w-[11%]"
+  a: "left-[19%] top-0 h-[8%] w-[65%]",
+  g: "left-[19%] top-[45%] h-[8%] w-[65%]",
+  d: "left-[19%] bottom-0 h-[8%] w-[65%]",
+  b: "right-[4%] top-[5%] h-[41%] w-[9%]",
+  c: "right-[4%] bottom-[5%] h-[41%] w-[9%]",
+  e: "left-[7%] bottom-[5%] h-[41%] w-[9%]",
+  f: "left-[7%] top-[5%] h-[41%] w-[9%]"
 };
 
 type SegmentDigitProps = {

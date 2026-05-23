@@ -1,11 +1,12 @@
 "use client";
 
 import { MovableContainer } from "@/components/MovableContainer"
+import { RelayTextureOverlay } from "@/components/RelayTextureOverlay"
 import { TimerDisplay } from "@/components/TimerDisplay"
 import { formatTimer } from "@/lib/time"
 import { useEffect, useMemo, useState } from "react"
 
-const START_SECONDS = 1 * 60;
+const START_SECONDS = 15 * 60;
 const STORAGE_KEY = "screen-prop-timer-started-at";
 
 export default function Page() {
@@ -72,30 +73,16 @@ export default function Page() {
   }
 
   return (
-    <main className="h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.24),transparent_48%),linear-gradient(145deg,#111,#030303_72%)] p-4 text-zinc-200">
+    <main className="h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.24),transparent_48%),linear-gradient(145deg,#111,#030303_72%)] text-zinc-200">
       <MovableContainer>
-        <section>
-          <div className="relative rounded-[28px] p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
+        <section aria-label="Кино-реквизитный экранный таймер">
+          <div className="relative rounded-[28px] border border-zinc-700/60 bg-zinc-950/95 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
+            <RelayTextureOverlay active={isRunning} />
             <div className="pointer-events-none absolute inset-4 rounded-[20px] border border-white/5" />
-
-            <div className="mb-4 flex items-center justify-between px-1 text-[10px] uppercase tracking-[0.32em] text-zinc-500 sm:text-xs">
-              <span>{isRunning ? "Взведено" : "Ожидание"}</span>
-            </div>
-
             <TimerDisplay digits={digits} active={isRunning} />
 
             <div className="mt-5 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.28em] text-zinc-500 sm:text-xs">
-                <span
-                  className={[
-                    "size-2 rounded-full",
-                    isRunning ? "bg-red-500 shadow-[0_0_18px_#ff1a1a]" : "bg-zinc-700"
-                  ].join(" ")}
-                />
-                <span>{isRunning ? "Signal active" : "Signal idle"}</span>
-              </div>
-
-              <div className="hidden gap-2 sm:flex">
+              <div className="hidden m-auto gap-2 sm:flex">
                 <button
                   type="button"
                   onClick={startTimer}

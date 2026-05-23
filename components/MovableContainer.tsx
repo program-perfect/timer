@@ -153,7 +153,7 @@ export function MovableContainer({ children }: MovableContainerProps) {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onDoubleClick={resetPosition}
-        className="w-full max-w-4xl cursor-grab active:cursor-grabbing"
+        className="h-full w-full cursor-grab active:cursor-grabbing"
         style={{
           transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
           transformOrigin: "center center"

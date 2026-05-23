@@ -33,6 +33,7 @@ body {
   user-select: none;
   -webkit-user-select: none;
   -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 button {
