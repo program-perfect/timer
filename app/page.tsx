@@ -6,10 +6,15 @@ import { TimerDisplay } from "@/components/TimerDisplay"
 import { formatTimer } from "@/lib/time"
 import { useEffect, useMemo, useState } from "react"
 
-const START_SECONDS = 15 * 60;
+const START_SECONDS = 30;
+const PRESET_SECONDS = [30, 60, 3 * 60, 5 * 60, 10 * 60, 15 * 60, 30 * 60];
+
 const STORAGE_KEY = "screen-prop-timer-started-at";
+const STORAGE_DURATION_KEY = "screen-prop-timer-duration";
 
 export default function Page() {
+  const [durationSeconds, setDurationSeconds] = useState(START_SECONDS);
+  const [isTimePanelOpen, setIsTimePanelOpen] = useState(false);
   const [remaining, setRemaining] = useState(START_SECONDS);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -17,16 +22,27 @@ export default function Page() {
 
   useEffect(() => {
     const savedStart = window.localStorage.getItem(STORAGE_KEY);
+    const savedDuration = Number(
+      window.localStorage.getItem(STORAGE_DURATION_KEY) || START_SECONDS
+    );
 
     if (!savedStart) {
+      setDurationSeconds(savedDuration);
+      setRemaining(savedDuration);
       return;
     }
 
     const elapsed = Math.floor((Date.now() - Number(savedStart)) / 1000);
-    const nextRemaining = Math.max(0, START_SECONDS - elapsed);
+    const nextRemaining = Math.max(0, savedDuration - elapsed);
 
+    setDurationSeconds(savedDuration);
     setRemaining(nextRemaining);
     setIsRunning(nextRemaining > 0);
+
+    if (nextRemaining <= 0) {
+      window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(STORAGE_DURATION_KEY);
+    }
   }, []);
 
   useEffect(() => {
@@ -36,28 +52,55 @@ export default function Page() {
 
     const interval = window.setInterval(() => {
       const savedStart = window.localStorage.getItem(STORAGE_KEY);
+      const savedDuration = Number(
+        window.localStorage.getItem(STORAGE_DURATION_KEY) || durationSeconds
+      );
 
       if (!savedStart) {
         return;
       }
 
       const elapsed = Math.floor((Date.now() - Number(savedStart)) / 1000);
-      const nextRemaining = Math.max(0, START_SECONDS - elapsed);
+      const nextRemaining = Math.max(0, savedDuration - elapsed);
 
       setRemaining(nextRemaining);
 
       if (nextRemaining <= 0) {
         setIsRunning(false);
         window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(STORAGE_DURATION_KEY);
       }
     }, 250);
 
     return () => window.clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, durationSeconds]);
+
+  function applyDuration(seconds: number) {
+    setDurationSeconds(seconds);
+    setRemaining(seconds);
+    setIsTimePanelOpen(false);
+
+    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.setItem(STORAGE_DURATION_KEY, String(seconds));
+  }
+
+  function addMinute() {
+    const next = Math.min(99 * 60 + 59, durationSeconds + 60);
+    applyDuration(next);
+  }
+
+  function removeMinute() {
+    const next = Math.max(10, durationSeconds - 60);
+    applyDuration(next);
+  }
 
   function startTimer() {
+    setIsTimePanelOpen(false);
+
     window.localStorage.setItem(STORAGE_KEY, String(Date.now()));
-    setRemaining(START_SECONDS);
+    window.localStorage.setItem(STORAGE_DURATION_KEY, String(durationSeconds));
+
+    setRemaining(durationSeconds);
     setIsRunning(true);
   }
 
@@ -68,21 +111,78 @@ export default function Page() {
 
   function resetTimer() {
     window.localStorage.removeItem(STORAGE_KEY);
-    setRemaining(START_SECONDS);
+    setRemaining(durationSeconds);
     setIsRunning(false);
   }
 
   return (
-    <main className="h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.24),transparent_48%),linear-gradient(145deg,#111,#030303_72%)] text-zinc-200">
+    <main className="relative h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.24),transparent_48%),linear-gradient(145deg,#111,#030303_72%)] text-zinc-200">
+      {!isRunning && (
+        <div className="absolute right-4 top-4 z-50 flex flex-col items-end gap-2">
+          <button
+            type="button"
+            onClick={() => setIsTimePanelOpen((current) => !current)}
+            className="rounded-xl border border-red-900/60 bg-black/80 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-red-200 shadow-[0_0_22px_rgba(255,0,0,0.18)] backdrop-blur transition active:translate-y-px"
+          >
+            Time {formatTimer(durationSeconds)}
+          </button>
+
+          {isTimePanelOpen && (
+            <div className="w-64 rounded-2xl border border-zinc-700/70 bg-black/90 p-3 shadow-[0_20px_60px_rgba(0,0,0,0.75)] backdrop-blur">
+              <div className="mb-3 text-center font-segment text-5xl leading-none tracking-[0.03em] text-red-500 drop-shadow-[0_0_14px_rgba(255,0,0,0.72)]">
+                {formatTimer(durationSeconds)}
+              </div>
+
+              <div className="mb-3 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={removeMinute}
+                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-300 active:translate-y-px"
+                >
+                  -1 min
+                </button>
+
+                <button
+                  type="button"
+                  onClick={addMinute}
+                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-300 active:translate-y-px"
+                >
+                  +1 min
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {PRESET_SECONDS.map((seconds) => (
+                  <button
+                    key={seconds}
+                    type="button"
+                    onClick={() => applyDuration(seconds)}
+                    className={[
+                      "rounded-lg border px-2 py-2 text-[10px] font-bold uppercase tracking-[0.12em] active:translate-y-px",
+                      seconds === durationSeconds
+                        ? "border-red-700 bg-red-950/50 text-red-100"
+                        : "border-zinc-700 bg-zinc-900 text-zinc-400"
+                    ].join(" ")}
+                  >
+                    {formatTimer(seconds)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <MovableContainer>
         <section aria-label="Кино-реквизитный экранный таймер">
           <div className="relative rounded-[28px] border border-zinc-700/60 bg-zinc-950/95 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
             <RelayTextureOverlay active={isRunning} />
             <div className="pointer-events-none absolute inset-4 rounded-[20px] border border-white/5" />
+
             <TimerDisplay digits={digits} active={isRunning} />
 
             <div className="mt-5 flex items-center justify-between gap-4">
-              <div className="hidden m-auto gap-2 sm:flex">
+              <div className="m-auto hidden gap-2 sm:flex">
                 <button
                   type="button"
                   onClick={startTimer}
@@ -90,6 +190,7 @@ export default function Page() {
                 >
                   Start
                 </button>
+
                 <button
                   type="button"
                   onClick={stopTimer}
@@ -97,6 +198,7 @@ export default function Page() {
                 >
                   Stop
                 </button>
+
                 <button
                   type="button"
                   onClick={resetTimer}
