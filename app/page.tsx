@@ -234,7 +234,7 @@ export default function Page() {
                   onClick={startTimer}
                   className="rounded-lg border border-red-900/60 bg-red-950/30 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-red-200 transition active:translate-y-px"
                 >
-                  Start
+                  Запустить
                 </button>
 
                 <button
@@ -242,7 +242,7 @@ export default function Page() {
                   onClick={stopTimer}
                   className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-zinc-300 transition active:translate-y-px"
                 >
-                  Stop
+                  Остановить
                 </button>
 
                 <button
@@ -250,7 +250,7 @@ export default function Page() {
                   onClick={resetTimer}
                   className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-zinc-300 transition active:translate-y-px"
                 >
-                  Reset
+                  Сбросить
                 </button>
               </div>
             </div>
