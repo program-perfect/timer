@@ -221,13 +221,13 @@ export default function Page() {
 
       <MovableContainer>
         <section aria-label="Кино-реквизитный экранный таймер">
-          <div className="relative rounded-[28px] border border-zinc-700/60 bg-zinc-950/95 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
+          <div className="relative rounded-[28px] p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
             <RelayTextureOverlay active={isRunning} />
             <div className="pointer-events-none absolute inset-4 rounded-[20px] border border-white/5" />
 
             <TimerDisplay digits={digits} active={isRunning} />
 
-            <div className="mt-5 flex items-center justify-between gap-4">
+            <div className="mt-[25rem] flex items-center justify-between gap-4">
               <div className="m-auto gap-2">
                 <button
                   type="button"
