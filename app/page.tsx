@@ -228,7 +228,7 @@ export default function Page() {
             <TimerDisplay digits={digits} active={isRunning} />
 
             <div className="mt-5 flex items-center justify-between gap-4">
-              <div className="m-auto hidden gap-2 sm:flex">
+              <div className="m-auto hidden gap-2">
                 <button
                   type="button"
                   onClick={startTimer}
