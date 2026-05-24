@@ -21,12 +21,12 @@ export function RelayTextureOverlay({ active }: RelayTextureOverlayProps) {
       <div className="absolute bottom-6 right-6 h-7 w-7 rounded-full border border-zinc-500/30 bg-black/25 shadow-[inset_0_1px_4px_rgba(255,255,255,0.18)]" />
 
       <div className="absolute left-1/2 top-4 h-px w-[72%] -translate-x-1/2 bg-gradient-to-r from-transparent via-zinc-400/25 to-transparent" />
-      <div className="absolute bottom-4 left-1/2 h-px w-[72%] -translate-x-1/2 bg-gradient-to-r from-transparent via-red-500/18 to-transparent" />
+      <div className="absolute bottom-4 left-1/2 h-px w-[72%] -translate-x-1/2 bg-gradient-to-r from-transparent via-red-700/18 to-transparent" />
       <div
         className={[
           "absolute right-10 top-10 h-2 w-2 rounded-full",
           active
-            ? "bg-red-500 shadow-[0_0_16px_#ff1a1a]"
+            ? "bg-red-700 shadow-[0_0_16px_#ff1a1a]"
             : "bg-zinc-700/80 shadow-none"
         ].join(" ")}
       />

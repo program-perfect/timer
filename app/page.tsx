@@ -168,7 +168,7 @@ export default function Page() {
           <button
             type="button"
             onClick={() => setIsTimePanelOpen((current) => !current)}
-            className="rounded-xl border border-red-900/60 bg-black/80 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-red-200 shadow-[0_0_22px_rgba(255,0,0,0.18)] backdrop-blur transition active:translate-y-px"
+            className="rounded-xl bg-black/80 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-red-200 shadow-[0_0_22px_rgba(255,0,0,0.18)] backdrop-blur transition active:translate-y-px"
           >
             Настройка:{" "}{formatTimer(durationSeconds)}
           </button>
@@ -206,7 +206,7 @@ export default function Page() {
                     className={[
                       "rounded-lg border px-2 py-2 text-[10px] font-bold uppercase tracking-[0.12em] active:translate-y-px",
                       seconds === durationSeconds
-                        ? "border-red-700 bg-red-950/50 text-red-100"
+                        ? "border-red-500 bg-red-950/50 text-red-100"
                         : "border-zinc-700 bg-zinc-900 text-zinc-400"
                     ].join(" ")}
                   >
@@ -223,7 +223,7 @@ export default function Page() {
         <section aria-label="Кино-реквизитный экранный таймер">
           <div className="relative rounded-[28px] p-4 shadow-[0_32px_90px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-8">
             <RelayTextureOverlay active={isRunning} />
-            <div className="pointer-events-none absolute inset-4 rounded-[20px] border border-white/5" />
+            <div className="pointer-events-none absolute inset-4 rounded-[20px]" />
 
             <TimerDisplay digits={digits} active={isRunning} />
 

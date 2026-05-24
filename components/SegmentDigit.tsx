@@ -37,7 +37,7 @@ export function SegmentDigit({ value }: SegmentDigitProps) {
           <span
             key={segment}
             className={[
-              "absolute rounded-[2px] transition-colors duration-100",
+              "absolute rounded-[0.75rem] transition-colors duration-100",
               SEGMENT_POSITION[segment],
               active
                 ? "bg-red-500 shadow-[0_0_8px_#ff1a1a,0_0_24px_rgba(255,0,0,0.38)]"
