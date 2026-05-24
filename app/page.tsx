@@ -170,7 +170,7 @@ export default function Page() {
             onClick={() => setIsTimePanelOpen((current) => !current)}
             className="rounded-xl border border-red-900/60 bg-black/80 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-red-200 shadow-[0_0_22px_rgba(255,0,0,0.18)] backdrop-blur transition active:translate-y-px"
           >
-            Time {formatTimer(durationSeconds)}
+            Настройка:{" "}{formatTimer(durationSeconds)}
           </button>
 
           {isTimePanelOpen && (
@@ -185,7 +185,7 @@ export default function Page() {
                   onClick={removeMinute}
                   className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-300 active:translate-y-px"
                 >
-                  -1 min
+                  -1 мин
                 </button>
 
                 <button
@@ -193,7 +193,7 @@ export default function Page() {
                   onClick={addMinute}
                   className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-300 active:translate-y-px"
                 >
-                  +1 min
+                  +1 мин
                 </button>
               </div>
 
